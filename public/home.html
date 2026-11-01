@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Minijuegos - TFG DAM</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="main-container">
+    <header class="navbar">
+      <h1>🎮 RetroGames Portal Victor Palomares</h1>
+      <p class="subtitle">Proyecto de Fin de Grado | Desarrollo de Aplicaciones Multiplataforma</p>
+    </header>
+
+    <main class="games-grid">
+      <!-- Tarjeta Tetris -->
+      <div class="game-card">
+        <div class="card-header tetris-bg">
+          <h2>Tetris</h2>
+        </div>
+        <div class="card-body">
+          <p>Encaja las piezas en caída, completa líneas horizontales y consigue la puntuación más alta.</p>
+          <a href="tetris.html" class="btn-play">Jugar Ahora</a>
+        </div>
+      </div>
+
+      <!-- Tarjeta Snake -->
+      <div class="game-card">
+        <div class="card-header snake-bg">
+          <h2>Snake</h2>
+        </div>
+        <div class="card-body">
+          <p>Controla la serpiente, come manzanas para crecer y evita chocar contra los límites o contigo mismo.</p>
+          <a href="snake.html" class="btn-play">Jugar Ahora</a>
+        </div>
+      </div>
+    </main>
+
+    <!-- Sección de Ranking / Leaderboard -->
+    <section class="leaderboard-container">
+      <h2>🏆 Tabla de Clasificación (Top 10)</h2>
+      <div class="tab-buttons">
+        <button id="tab-tetris" class="tab-btn active" onclick="loadLeaderboard('tetris')">Tetris</button>
+        <button id="tab-snake" class="tab-btn" onclick="loadLeaderboard('snake')">Snake</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jugador</th>
+              <th>Puntuación</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <tr>
+              <td colspan="4">Cargando puntuaciones...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Pie de página -->
+    <footer class="footer">
+      <p>© 2026 RetroGames Portal — Desarrollado por <strong>Victor Palomares Dominguez</strong> | TFG DAM</p>
+    </footer>
+  </div>
+
+  <script>
+    let currentGame = 'tetris';
+
+    async function loadLeaderboard(game) {
+      currentGame = game;
+
+      // Actualizar estilo de pestañas
+      document.getElementById('tab-tetris').classList.toggle('active', game === 'tetris');
+      document.getElementById('tab-snake').classList.toggle('active', game === 'snake');
+
+      const tbody = document.getElementById('leaderboard-body');
+      tbody.innerHTML = '<tr><td colspan="4">Cargando puntuaciones...</td></tr>';
+
+      try {
+        const response = await fetch(`http://localhost:3001/api/scores/${game}`);
+        const scores = await response.json();
+
+        if (scores.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4">No hay puntuaciones registradas aún.</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = scores.map((item, index) => {
+          const date = new Date(item.createdAt).toLocaleDateString('es-ES', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+
+          return `
+            <tr>
+              <td class="rank">${index + 1}</td>
+              <td class="username">${escapeHtml(item.username)}</td>
+              <td class="score">${item.score} pts</td>
+              <td class="date">${date}</td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (error) {
+        console.error('Error al cargar la clasificación:', error);
+        tbody.innerHTML = '<tr><td colspan="4" style="color: #ef4444;">Error al conectar con el servidor backend.</td></tr>';
+      }
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // Cargar Tetris por defecto
+    loadLeaderboard('tetris');
+  </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake - RetroGames Portal</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="main-container">
+    <header class="navbar">
+      <h1>🐍 Snake</h1>
+      <p class="subtitle"><a href="home.html" style="color: #38bdf8; text-decoration: none;">← Volver al Portal</a></p>
+    </header>
+
+    <main style="display: flex; flex-direction: column; align-items: center; gap: 15px; margin-top: 20px;">
+      <div style="font-size: 1.5rem; color: #f1f5f9; font-weight: bold;">
+        Puntuación: <span id="score" style="color: #22c55e;">0</span>
+      </div>
+
+      <!-- Controles visuales con emojis -->
+      <div style="font-size: 0.9rem; color: #cbd5e1; background-color: #1e293b; padding: 8px 16px; border-radius: 6px; border: 1px solid #334155;">
+        ⬆️ ⬇️ ⬅️ ➡️ Mover | ⏸️ <b>P</b> Pausar / Reanudar
+      </div>
+
+      <canvas id="snakeCanvas" width="400" height="400" style="border: 3px solid #334155; border-radius: 8px; background-color: #0f172a; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"></canvas>
+    </main>
+
+    <!-- Modal GameOver Snake -->
+    <div id="game-over-modal" class="modal-overlay">
+      <div class="modal-card">
+        <h2>¡Game Over!</h2>
+        <p>Puntuación conseguida: <span id="final-score-val" class="final-score">0</span></p>
+        <form id="score-form" onsubmit="handleScoreSubmit(event)">
+          <input type="text" id="player-name-input" class="modal-input" placeholder="Introduce tu nombre" maxlength="15" autocomplete="off">
+          
+          <div class="modal-buttons-container">
+            <button type="submit" class="modal-btn">Guardar</button>
+            <button type="button" class="modal-btn btn-secondary" onclick="skipScoreSave()">Omitir</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>© 2026 RetroGames Portal | TFG DAM</p>
+    </footer>
+  </div>
+
+  <!-- Aquí se carga el archivo de JavaScript por separado -->
+  <script src="snake.js"></script>
+</body>
+</html>
