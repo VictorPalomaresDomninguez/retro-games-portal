@@ -53,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function createPiece(type) {
-        // Clonamos profundamente la matriz para no alterar la original de SHAPES
         return SHAPES[type].map(row => [...row]);
     }
 
@@ -96,23 +95,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Rotación robusta compatible con matrices rectangulares (como la barra I)
     function rotate(matrix, dir) {
-        // Clonamos la matriz actual antes de transformarla para evitar corrupción de datos
-        const clonedMatrix = matrix.map(row => [...row]);
-        const n = clonedMatrix.length;
+        const rows = matrix.length;
+        const cols = matrix[0].length;
+        
+        // Creamos una nueva matriz invertida en dimensiones (columnas x filas)
+        const clonedMatrix = Array.from({ length: cols }, () => Array(rows).fill(0));
 
-        // Matriz transpuesta
-        for (let y = 0; y < n; ++y) {
-            for (let x = 0; x < y; ++x) {
-                [clonedMatrix[x][y], clonedMatrix[y][x]] = [clonedMatrix[y][x], clonedMatrix[x][y]];
+        for (let y = 0; y < rows; ++y) {
+            for (let x = 0; x < cols; ++x) {
+                if (dir > 0) {
+                    // Sentido horario
+                    clonedMatrix[x][rows - 1 - y] = matrix[y][x];
+                } else {
+                    // Sentido antihorario
+                    clonedMatrix[cols - 1 - x][y] = matrix[y][x];
+                }
             }
-        }
-
-        // Invertir filas o columnas según la dirección
-        if (dir > 0) {
-            clonedMatrix.forEach(row => row.reverse());
-        } else {
-            clonedMatrix.reverse();
         }
 
         return clonedMatrix;
@@ -122,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const posX = player.pos.x;
         let offset = 1;
         
-        // Guardamos una copia de seguridad por si hay colisión
         const originalMatrix = player.matrix;
         player.matrix = rotate(player.matrix, dir);
 
@@ -130,7 +129,6 @@ document.addEventListener('DOMContentLoaded', () => {
             player.pos.x += offset;
             offset = -(offset + (offset > 0 ? 1 : -1));
             if (offset > player.matrix[0].length) {
-                // Si no hay espacio para encajarla, revertimos la rotación
                 player.matrix = originalMatrix;
                 player.pos.x = posX;
                 return;
@@ -143,7 +141,6 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let y = 0; y < m.length; ++y) {
             for (let x = 0; x < m[y].length; ++x) {
                 if (m[y][x] !== 0) {
-                    // Validación segura de límites para evitar errores de undefined
                     if (
                         board[y + o.y] === undefined ||
                         board[y + o.y][x + o.x] === undefined ||
