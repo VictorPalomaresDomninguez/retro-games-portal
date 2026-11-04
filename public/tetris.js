@@ -142,8 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const [m, o] = [player.matrix, player.pos];
         for (let y = 0; y < m.length; ++y) {
             for (let x = 0; x < m[y].length; ++x) {
-                if (m[y][x] !== 0 && (board[y + o.y] && board[y + o.y][x + o.x]) !== 0) {
-                    return true;
+                if (m[y][x] !== 0) {
+                    // Validación segura de límites para evitar errores de undefined
+                    if (
+                        board[y + o.y] === undefined ||
+                        board[y + o.y][x + o.x] === undefined ||
+                        board[y + o.y][x + o.x] !== 0
+                    ) {
+                        return true;
+                    }
                 }
             }
         }
