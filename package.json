@@ -9,6 +9,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^4.19.2",
+    "sequelize": "^6.37.8",
     "sqlite3": "^5.1.7"
   }
 }
