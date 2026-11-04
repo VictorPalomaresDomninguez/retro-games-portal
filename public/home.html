@@ -84,7 +84,8 @@
       tbody.innerHTML = '<tr><td colspan="4">Cargando puntuaciones...</td></tr>';
 
       try {
-        const response = await fetch(`http://localhost:3001/api/scores/${game}`);
+        // Uso de ruta relativa compatible tanto con local como con Render
+        const response = await fetch(`/api/scores/${game}`);
         const scores = await response.json();
 
         if (scores.length === 0) {
@@ -119,7 +120,7 @@
       return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    // Cargar Tetris por defecto
+    // Cargar Tetris por defecto al iniciar la página
     loadLeaderboard('tetris');
   </script>
 </body>
